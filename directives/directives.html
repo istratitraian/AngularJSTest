@@ -11,7 +11,6 @@
             padding: 10px;
 
         }
-
         p {
             color: red;
         }
@@ -28,22 +27,22 @@
     <main class="container border" ng-app="angApp3">
 
         <div ng-controller="angApp3Ctrl1">
-        
+
             <p>controller : {{ctrlName}}</p>
-        <hr/> 
-     
-        <my-angular-html-tag name="{{name}}" 
+        <hr/>
+
+        <my-angular-html-tag name="{{name}}"
                              my-object="myObject"
                              my-function="myFunction(param0)"><!--define number of params-->
 
         </my-angular-html-tag><!-- E -->
-            
+
         <div class="my-angular-html-tag" ></div><!-- C -->
-            
+
         <div my-angular-html-tag></div> <!-- A -->
-            
+
 <!--    directive:my-angular-html-tag  M -->
-            
+
         </div>
     </main>
 
@@ -51,22 +50,22 @@
         var angApp3 = angular.module("angApp3", []);
 
         angApp3.directive('myAngularHtmlTag',function(){
-            
+
             return {
                 restrict:'ACEM',
                 templateUrl:'template1.html',
                 replace:true,
                 scope:{
-                    name:'@',//text 
+                    name:'@',//text
                     myObject:'=',//bidirectional access
                     myFunction:'&'
                 }
             };
-            
+
         });
 
 
-       
+
         angApp3.controller("angApp3Ctrl1", ["$scope", "$timeout",
             function($s, $timeout) {
                 $s.ctrlName = "angApp3Ctrl";
@@ -74,7 +73,7 @@
                 $s.myObject = {id:'1',value:'123ABC!@#'},
                 $s.myFunction = function(str){
                     return $s.name+' : '+$s.myObject.value+' : str = '+str;
-                }    
+                }
             }
         ]);
     </script>
