@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Anthony Palicea AngularJS Course</title>
+        <meta charset="UTF-8"/>
+        <style>
+            .border{
+                border: 1px solid lightgray;
+                margin: 10px;
+                padding: 10px;
+
+            }
+            p{
+                color: red;
+            }
+        </style>
+
+        <script src="angularjs.js"></script>
+        <link  href="bootstrap.min.css" rel="stylesheet" media="screen"/>
+        <script src="jquery.min.js"></script>
+        <script src="bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <!--https://angular.io/api-->
+
+
+
+
+        <main class="container border" ng-app="angApp1" >
+
+            <div  ng-controller="angApp1Ctrl4HTTP" >
+                <input type="text" ng-model="modelInput" />
+                <a href="#" ng-click="addJsonObjPost()" class="btn btn-default">Add</a>
+                <p>controller : {{ctrlName}}</p>
+                <ul>
+                    <li ng-repeat="obj in jsonObjArr">
+                        {{obj.name}}
+                    </li>
+                </ul>
+            </div>
+
+            <hr/>
+
+            <div class="row r" ng-controller="angApp1Ctrl3">
+                <p >row controller : {{ctrlName}}</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" value="Click me!" ng-click="alertClick()" />
+                        <br/>
+                        <div ng-cloak>ng-cloak shows content when is ready for slow net connections: {{ctrlName}}</div>
+                        <br/>
+
+                        <ul>
+                            <li ng-repeat="rule in rules">
+                                {{rule.rulename}}
+                            </li>
+                        </ul>
+                        <!--<script>  $("li").hide().show(1000);</script>-->
+                    </div>
+                </div>
+
+            </div>
+
+            <hr/>
+            <div  ng-controller="angApp1Ctrl2">
+                <p>controller : {{ctrlName}}</p>
+
+                <div  ng-if="modelHandle.length !== minCharsAllowed" class="alert" 
+                      ng-class="{'alert-warning':modelHandle.length < minCharsAllowed,
+                              'alert-danger':modelHandle.length > minCharsAllowed
+                              }">
+                    Max {{ minCharsAllowed}} characters Allowed!
+                </div>
+                <!--<div  ng-show="modelHandle.length > minCharsAllowed" class="alert alert-success" >
+                                    Min {{ minCharsAllowed}} required, Acieved Success!
+                                </div>-->
+
+                <input type="text" ng-model="modelHandle" />
+                <h4>modelHandle = {{modelHandle}}</h4>
+                <h4>lowercaseModelHandle = {{ lowercaseModelHandle()}}</h4>
+                <h4>uppercaseModelHandle = {{ uppercaseModelHandle()}}</h4>
+
+            </div>
+
+            <hr/>
+
+            <div  ng-controller="angApp1Ctrl1" >
+
+                <p>controller : {{ctrlName}}</p>
+                <h2 > Hello {{name}} {{timeoutMsg}}</h2>
+            </div>
+
+        </main>
+
+        <script>
+            var angApp1 = angular.module("angApp1", []);
+            angApp1.controller("angApp1Ctrl4HTTP", ["$scope", "$http",
+                function ($s, $http) {
+                    $s.ctrlName = "angApp1Ctrl4HTTP";
+                    $s.modelInput = '';
+                    $s.addJsonObjPost = function () {
+                        var httpPostAndGetResult = $http.post('http://localhost:8080/rest',
+                                {id: -1, name: $s.modelInput});
+
+                        console.warn(httpPostAndGetResult);
+
+//                    httpPostAndGetResult.success(
+//                            function (result) {
+//                            $s.jsonObjArr = result.data;
+//                            }).error(
+//                            function (data, status) {
+//                            alert(data + " :: status = " + status);
+//                            });
+                    };
+                    //@CrossOrigin must be added to Spring Get, Post
+                    // ... @ResponseBody to allow 'Access-Control-Allow-Origin'
+                    var httpResultGet = $http.get('http://localhost:8080/rest');
+                    /*           httpResult.success(function (result) {
+                     //ERROR success is not a function
+                     $s.jsonObjArr = result;
+                     })
+                     .error(function (data, status) {
+                     alert(data + " :: status = " + status);
+                     });
+                     */
+
+                    httpResultGet.then(
+                            function (result) {
+                                $s.jsonObjArr = result.data;
+                            },
+                            function (data, status) {
+                                alert(data + " :: status = " + status);
+                            }
+                    );
+                }]);
+            angApp1.controller("angApp1Ctrl3", ["$scope",
+                function ($s) {
+                    $s.ctrlName = "angApp1Ctr3";
+                    $s.alertClick = function () {
+                        alert("Button clicked");
+                    };
+                    $s.rules = [
+                        {rulename: "rule1"},
+                        {rulename: "rule2"},
+                        {rulename: "rule3"}
+                    ];
+                }]);
+            angApp1.controller("angApp1Ctrl2", ["$scope", "$filter", "$timeout",
+                function ($s, $filter, $timeout) {
+
+                    $s.ctrlName = "angApp1Ctrl2";
+                    $s.modelHandle = '';
+                    $s.lowercaseModelHandle = function () {
+                        return $filter('lowercase')($s.modelHandle);
+                    };
+                    $s.uppercaseModelHandle = function () {
+                        return $filter('uppercase')($s.modelHandle);
+                    };
+                    //
+                    $s.$watch("modelHandle", function (newVal, oldVal) {
+                        console.info("oldVal " + oldVal + " != " + newVal + " newVal");
+                    });
+                    //
+                    $timeout(function () {
+                        $s.modelHandle = 'newValueFromOtherSourse';
+                        console.log('Scope changed!');
+                    }, 3000);
+                    //
+                    $s.minCharsAllowed = 5;
+                    // ng-if="modelHandle.lenght <== minCharsAllowed"
+                }]);
+            angApp1.controller("angApp1Ctrl1", ["$scope", "$timeout",
+                function ($s, $timeout) {
+                    $s.ctrlName = "angApp1Ctrl";
+                    $s.name = "Traian!!!";
+                    $timeout(function () {
+                        $s.timeoutMsg = " [ 3s TIME OUT]";
+                    }, 3000); //show after 3s
+                }]);
+            $("main").hide().show(500);
+
+
+        </script>
+
+
+
+    </body>
+</html>

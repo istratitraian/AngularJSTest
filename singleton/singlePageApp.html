@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Anthony Palicea  Singleton, Service</title>
+        <meta charset="UTF-8" />
+        <style>
+            .border {
+                border: 1px solid lightgray;
+                margin: 10px;
+                padding: 10px;
+
+            }
+
+            p {
+                color: red;
+            }
+        </style>
+
+        <script src="../angularjs.js"></script>
+        <link href="../bootstrap.min.css" rel="stylesheet" media="screen" />
+        <script src="../jquery.min.js"></script>
+        <script src="../bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <!--https://angular.io/api-->
+
+
+        <main class="container border" ng-app="angApp2">
+
+
+            <hr/>
+
+
+            <div ng-controller="angApp2Ctrl2">
+                <div>{{ctrlName}}</div>
+                <div style="color:red;">default ervice1.serviceName : {{service1Name}}</div>
+                <div>{{service1}}</div>
+            </div>
+            <hr/>
+            <div ng-controller="angApp2Ctrl1">
+                <div>{{ctrlName}}</div>
+                <div>{{service1}}</div>
+                <input type="text" ng-model="serviceName"/>
+            </div>
+
+
+
+        </main>
+
+        <script>
+            var angApp2 = angular.module("angApp2", []);
+            ////this service is Singleton is used to share Data trough multi Page Single App
+            angApp2.service('service1', function(){
+            this.serviceName = 'service1';
+            });
+            ////////////////
+            angApp2.controller("angApp2Ctrl2", ['$scope', '$log', 'service1',
+                    function ($s, $log, service1) {
+                    $s.ctrlName = "angApp2Ctrl2";
+                    $log.second = 'log Property from second';
+                    $log.log($log);
+                    $s.service1Name = service1.serviceName;
+                    $s.service1 = service1;
+                    service1.serviceName = 'newServiceName';
+                    }
+            ]);
+            angApp2.controller("angApp2Ctrl1", ['$scope', '$log', 'service1',
+                    function ($scope, $log, service1) {
+                    $scope.ctrlName = "angApp2Ctr1 ";
+                    $log.main = 'log Property from main';
+                    $log.log($log);
+                    $scope.service1 = service1;
+                    $scope.serviceName = service1.serviceName;
+                    /////// updates service1
+                    $scope.$watch('serviceName', function(){
+                    service1.serviceName = $scope.serviceName;
+                    });
+                    /////////////////
+                    }]);
+        </script>
+
+
+        <script>
+            $("main").hide().show(500);
+            // classic javascript
+        </script>
+
+    </body>
+
+</html>

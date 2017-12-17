@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Anthony Palicea AngularJS Course</title>
+    <meta charset="UTF-8" />
+    <style>
+        .border {
+            border: 1px solid lightgray;
+            margin: 10px;
+            padding: 10px;
+
+        }
+
+        p {
+            color: red;
+        }
+    </style>
+
+    <script src="../angularjs.js"></script>
+
+    <script src="angular-route.min.js"></script>
+
+    <link href="../bootstrap.min.css" rel="stylesheet" media="screen" />
+    <script src="../jquery.min.js"></script>
+    <script src="../bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!--https://angular.io/api-->
+
+
+    <!--    This is preferred way to build modern web app, because loads content of other pages into ng-view element -->
+
+    <main class="container border" ng-app="angApp2">
+
+        <a href="#!/">To MAIN</a> &nbsp;
+        <a href="#!/second">To Second</a> &nbsp;
+        <a href="#!/second/11">To Params</a>
+
+
+        <hr/>
+
+        <div ng-view class="container"> </div>
+
+
+    </main>
+
+    <script>
+        var angApp2 = angular.module("angApp2", ['ngRoute']);
+
+        angApp2.config(function($routeProvider) {
+            $routeProvider
+                .when('/', {
+                    templateUrl: 'main.html',
+                    controller: 'angApp2Ctrl1'
+                })
+                .when('/second', {
+                    templateUrl: 'second.html',
+                    controller: 'angApp2Ctrl2'
+                })
+                .when('/second/:num', {
+                    templateUrl: 'second.html',
+                    controller: 'angApp2Ctrl2'
+                });
+        });
+        angApp2.controller("angApp2Ctrl2", ['$scope', '$location', '$log', '$routeParams',
+            function($s, $loc, $log, $routeParams) {
+                $s.ctrlName = "angApp2Ctrl2 : loads other page into  'ng-view '";
+                $s.numParam = $routeParams.num || '-';
+            }
+        ]);
+        angApp2.controller("angApp2Ctrl1", ['$scope', '$location', '$log', function($s, $loc, $log) {
+            $s.ctrlName = "angApp2Ctr1 :  loads other page into  'ng-view '";
+        }]);
+       
+    </script>
+
+
+    <script>
+         $("main").hide().show(500);
+        // classic javascript
+        window.addEventListener('hashchange', function() {
+
+            console.warn("window.location.hash = " + window.location.hash);
+
+            //                            
+            if (window.location.hash === '#!/') {
+                console.warn("MAIN");
+            }
+            if (window.location.hash === '#!/second') {
+                console.warn("Second");
+            }
+
+        });
+    </script>
+
+
+
+
+
+
+
+</body>
+
+</html>

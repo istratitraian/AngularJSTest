@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Anthony Palicea AngularJS Course</title>
+    <meta charset="UTF-8" />
+    <style>
+        .border {
+            border: 1px solid lightgray;
+            margin: 10px;
+            padding: 10px;
+
+        }
+
+        p {
+            color: red;
+        }
+    </style>
+
+    <script src="../angularjs.js"></script>
+    <link href="../bootstrap.min.css" rel="stylesheet" media="screen" />
+    <script src="../jquery.min.js"></script>
+    <script src="../bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!--https://angular.io/api-->
+    <main class="container border" ng-app="angApp3">
+
+        <div ng-controller="angApp3Ctrl1">
+        
+            <p>controller : {{ctrlName}}</p>
+        <hr/> 
+     
+        <my-angular-html-tag name="{{name}}" 
+                             my-object="myObject"
+                             my-function="myFunction(param0)"><!--define number of params-->
+
+        </my-angular-html-tag><!-- E -->
+            
+        <div class="my-angular-html-tag" ></div><!-- C -->
+            
+        <div my-angular-html-tag></div> <!-- A -->
+            
+<!--    directive:my-angular-html-tag  M -->
+            
+        </div>
+    </main>
+
+    <script>
+        var angApp3 = angular.module("angApp3", []);
+
+        angApp3.directive('myAngularHtmlTag',function(){
+            
+            return {
+                restrict:'ACEM',
+                templateUrl:'template1.html',
+                replace:true,
+                scope:{
+                    name:'@',//text 
+                    myObject:'=',//bidirectional access
+                    myFunction:'&'
+                }
+            };
+            
+        });
+
+
+       
+        angApp3.controller("angApp3Ctrl1", ["$scope", "$timeout",
+            function($s, $timeout) {
+                $s.ctrlName = "angApp3Ctrl";
+                $s.name = "Traian Istrati";
+                $s.myObject = {id:'1',value:'123ABC!@#'},
+                $s.myFunction = function(str){
+                    return $s.name+' : '+$s.myObject.value+' : str = '+str;
+                }    
+            }
+        ]);
+    </script>
+
+
+    <script>
+        $("main").hide().show(500);
+    </script>
+
+
+
+</body>
+
+</html>
